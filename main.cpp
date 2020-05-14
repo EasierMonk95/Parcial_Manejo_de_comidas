@@ -1,9 +1,89 @@
+//Trabajo hecho por Simon Sanchez Rua
+//Observar practica 3 para ver que puede ser usado
 #include <iostream>
 
 using namespace std;
 
 int main()
-{
-    cout << "Hello World!" << endl;
-    return 0;
+{    
+        bool decide=true,decide2=true, metodo;
+        string cont,texto4;
+        int a,b,m=2,n=4;
+        while(decide){
+            cout<<"Bienvenido a cajeros Info.2"<<endl;
+            cout<<"Que desea realizar?"<<endl<<"1.Ingresar como administrador"<<endl<<"2.Ingresar como usuario"<<endl<<"3.Salir"<<endl<<"Coloca el numero de la opcion ";
+            cin>> a;
+        if(a==1 || a==2) decide=true;
+        else decide=false;
+
+        if(a==1){
+            cout<<"Coloque su contrasena: ";
+            cin>>cont;
+            cout<<cont<<endl;
+            metodo=true;
+            texto4 = Decodificacion_simple(m,metodo,a,n);
+            //cout<<texto4<<endl;
+            if(cont!=texto4){
+                cout<<"Su contrasena es erronea."<<endl;
+            }
+            else{
+                while(decide2){
+              cout<<"Dedide que hacer"<<endl<<"1.Decidir metodo de codificacion y semilla"<<endl<<"2.Registrar usuarios"<<endl<<"3.Salir"<<endl<<"Coloca el numero de la opcion ";
+              cin>>b;
+              if(b==3)decide2=false;
+              else if(b==1){
+                  m=seleccionar();
+                  n=seleccionar_semilla();
+                  decide2=false;
+              }
+              else if(b==2){
+                  bool real=true;
+                  bool S;
+                  string name,text_aux;
+                      /*cout<<"Coloque cedula del usuario, clave y saldo separados en medio por un espacio: ";
+                      getline(cin, text);
+                      escribir_Txt(text,metodo);
+                      cout<<"Desea continuar? (1 para si y 0 para no) ";
+                      cin>>S;
+                      if(!S)real=false;
+                      text_aux=text*/;
+                      while(real){
+                          cout<<"Coloque cedula del usuario, clave y saldo separados en medio por un espacio: ";
+                          cin>>name;
+                          escribir_Txt2(name,metodo);
+                      cout<<"\nDesea continuar? (1 para si y 0 para no) ";
+                      cin>>S;
+                      if(!S)real=false;
+                      //text_aux=text;
+                  }
+              }
+              }
+            }
+        }
+        else if(a==2){
+            cout<<"Coloque su cedula y luego de un espacio su clave: ";
+            cin>>cont;
+            metodo=true;
+            texto4 = Decodificacion_simple(m,metodo,a,n);
+            cout<<texto4<<endl;
+            if(cont!=texto4){
+                cout<<"Su contrasena es erronea."<<endl;
+            }
+            else{
+                int counta=1, aux_i=0;
+                string aux_text,st2=" ",st1="\n";
+            for(int i=0;i!=-1;i++){
+                if(counta==2) cout<<"Usuario: ";
+                else if(counta==3) cout<<"Saldo actual: ";
+                if( /*texto4[i]==st2[0] || texto4[i]==st1[0]*/ isspace(texto4[i])){
+                    if(counta!=2)
+                    {cout<<aux_text.substr(aux_i,i)<<endl;}
+                    i+=1;
+                    counta+=1;
+                }
+                aux_text[i]=texto4[i];
+            }
+            }
+        }
+    }
 }
