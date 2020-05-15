@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <sstream>
 
 using namespace std;
 
@@ -17,4 +18,3 @@ int mover(short *seg, unsigned long long int semilla, bool *data);
 int moverdevuelta(short *seg,unsigned long long int semilla, bool *data);
 string metodo2(bool metodo, unsigned long long int semilla, string text);
 void separacion2(unsigned long long int semilla, bool *cod, unsigned long long int tam, bool metodo);
-
