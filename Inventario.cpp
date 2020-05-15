@@ -1,5 +1,30 @@
 #include "Menu_definer.h"
 
+// Definición del constructor, fuera de la estructura. Inicialización básica
+Info_Combo::Info_Combo( ){
+    nombre = " ";
+    valor = 0;
+}
+
+// Definición de función para asignar producto y precio con la estructura combo
+void Info_Combo::Set_Combo(string str_producto, int precio){
+    nombre = str_producto;
+    valor = precio;
+}
+
+// Constructor: Inicializacion basica
+Inventario::Inventario(){
+    Total_Productos = 0;
+    Productos = {};
+}
+
+// Destructor: Libera memoria
+Inventario::~Inventario(){
+   if (Productos.size() != 0) Productos.clear();
+   Total_Productos = 0;
+   Productos = {};
+}
+
 // Definicion del constructor, fuera de la estructura. Inicializacion basica
 Info_Producto::Info_Producto(){
     nombre = " ";
@@ -20,18 +45,47 @@ void Info_Producto::Set_Info_Producto(string str_producto,string str_unidad, int
     valor = precio;
 }
 
-// Constructor: Inicializacion basica
-Inventario::Inventario(){
-    Total_Productos = 0;
-    Productos = {};
+
+//Funcion que adiciona un producto nuevo al mapa
+void Inventario::Adicionar_Producto(int ID, Producto var_producto){
+    Productos[ID] = var_producto;
+    Total_Productos++;
 }
 
-// Destructor: Libera memoria
-Inventario::~Inventario(){
-   if (Productos.size() != 0) Productos.clear();
-   Total_Productos = 0;
-   Productos = {};
+//Funcion que elimina un producto del mapa
+void Inventario::Eliminar_Producto(int ID){
+    map<int ,Producto >::iterator iter;
+
+    iter = Productos.find(ID);
+    if(iter != Productos.end()){
+        Productos.erase(ID);
+        Total_Productos--;
+    } else {
+        cout<<"Producto no encontrado"<<endl;
+    }
 }
+
+//Funcion que retorna el producto con clave ID del mapa
+Producto Inventario::Retornar_Producto(int ID){
+    return Productos[ID];
+}
+
+//Funcion que retorna el total de productos en el mapa
+int Inventario::Retorna_Total_Productos(){
+    return Total_Productos;
+}
+
+//Lista en pantalla los productos disponibles
+void Inventario::Mostrar_Productos_Disponibles(){
+    map<int ,Producto >::iterator iter;
+      Producto var_producto;
+    for(iter=Productos.begin();iter!=Productos.end();iter++){
+        var_producto=iter->second;
+        cout<<iter->first<<" "<<var_producto.nombre<<" "<<var_producto.cant_unidad_variable<<endl;
+    }
+
+}
+
 
 
 
@@ -45,11 +99,11 @@ Para la base de dados del ejemplo de inventario dado el archivo es:
 4 Paquete de Carne para Hamburguesa ; 4 Unds 4 46200
 5 Bolsa de Salsa Roja ; 150 ml 3 21600*/
 void Inventario::Inventario_File_Reader(string filename){
-    cout<<"Ingreso la funcion"<<endl;
     ifstream FileIn(filename.c_str(), ios::in);
     string str, str_producto, str_unidad;
     int i = 0, var, ID_producto, cant_unidad, cant_total, valor;
     Producto var_producto;
+    map<int , Producto >::iterator iter;
 
   if ( FileIn.is_open() ){
     while (!FileIn.eof()){
@@ -66,11 +120,16 @@ void Inventario::Inventario_File_Reader(string filename){
        FileIn>>str_unidad;
        FileIn>>cant_total;
        FileIn>>valor;
-       cout<<str_producto<<" por "<<cant_unidad<<" "<<str_unidad<<" "<<cant_total<<" $"<<valor<<endl;
+
        var_producto.Set_Info_Producto(str_producto,str_unidad,cant_unidad,cant_total,valor);
 
-       Productos[ID_producto] = var_producto; //Inserta el producto en el mapa, usando como clave ID_Producto
-
+       iter = Productos.find(ID_producto); //La clave solo se inserta una vez, si se insero previamente ignora el nuevo producto
+       if ( iter == Productos.end()){
+                 Productos[ID_producto] = var_producto; //Inserta el producto en el mapa, usando como clave ID_Producto
+                 i++;
+                 Total_Productos = i;
+              }
+       //cout<<"Id = "<<ID_producto<<", "<<str_producto<<" por "<<cant_unidad<<" "<<str_unidad<<" "<<cant_total<<" $"<<valor<<endl;
     }
     FileIn.close();
   } else {
@@ -78,9 +137,85 @@ void Inventario::Inventario_File_Reader(string filename){
         }
 }
 
+//Funcion que aumenta la cantidad total de un producto, agregando la nueva cantidad adquirida del producto
+void Inventario::Agregar_Cantidad_Producto(int ID, int cant_total){
+    map<int ,Producto >::iterator iter;
+    Producto var_producto;
 
+    iter = Productos.find(ID);
+    if(iter != Productos.end()){
+        var_producto = iter->second;
+        var_producto.cant_total = var_producto.cant_total + cant_total;
+        iter->second = var_producto;
+    } else {
+        cout<<"El ID no se encuentra asignado a ningun producto"<<endl;
+    }
+}
 
+//Funcion que reduce la cantidad de un producto. Retorna -1 sino hay producto disponible o no existe, y 1 en caso contrario
+int Inventario::Disminuir_Cantidad_Producto(int ID, int cant_disminuir){
+    map<int ,Producto >::iterator iter;
+    Producto var_producto;
+    int dis = -1;
 
+    iter = Productos.find(ID);
+    if(iter != Productos.end()){
+        var_producto = iter->second;
+        if (var_producto.cant_unidad_variable > cant_disminuir){
+            var_producto.cant_unidad_variable = var_producto.cant_unidad_variable - cant_disminuir;
+            iter->second = var_producto;
+        } else {
+            if (var_producto.cant_unidad_variable == cant_disminuir){
+                if (var_producto.cant_total > 1){ //Todavia hay existencia del producto para una siguiente venta
+                   var_producto.cant_unidad_variable = var_producto.cant_unidad;
+                   var_producto.cant_total = var_producto.cant_total - 1;
+                   dis = 1;
+                } else {
+                   var_producto.cant_unidad_variable = 0;
+                   var_producto.cant_total = 0;
+                   dis = 1;
+                   cout<<"Advertencia el producto "<<var_producto.nombre<<" se ha agotado. "<<endl;
+                }
+            } else {
+                int factor;
+                factor = cant_disminuir/var_producto.cant_unidad;
+                if (factor < var_producto.cant_total) {
+                    var_producto.cant_unidad_variable = var_producto.cant_unidad*factor - cant_disminuir +  var_producto.cant_unidad_variable;
+                    var_producto.cant_total = var_producto.cant_total - factor;
+                    dis = 1;
+                } else {
+                    cout<<"No disponible la cantidad del producto solicitada. El inventario actual es: "<<endl;
+                    cout<<var_producto.nombre<<" por "<<var_producto.cant_unidad<<" "<<var_producto.unidad;
+                    cout<<" y cantidad "<<var_producto.cant_total<<endl;
+                }
+            }
+        }
+    } else {
+        cout<<"El ID no se encuentra asignado a ningun producto"<<endl;
+    }
+    return dis;
+}
+
+void Inventario::Inventario_File_Writer(string filename){
+    ofstream FileOut(filename.c_str(), ios::out);
+    Producto var_producto;
+    map<int , Producto >::iterator iter;
+
+  if ( FileOut.is_open() ){
+    for(iter = Productos.begin(); iter != Productos.end(); iter++){
+       var_producto = iter->second;
+       FileOut<<iter->first<<"  "; //ID del producto
+       FileOut<<var_producto.nombre<<" ; "; //Nombre o descripcion del producto
+       FileOut<<var_producto.cant_unidad<<" "; //Cantidad por paquete o medida
+       FileOut<<var_producto.unidad<<" "; //Unidad de medida
+       FileOut<<var_producto.cant_total<<" "; //Cantidad disponible del producto
+       FileOut<<var_producto.valor<<endl;  //Precio
+    }
+    FileOut.close();
+  } else {
+           cout<<"Error de apertura del archivo."<<endl;
+        }
+}
 
 /*int main(){
    Inventario var_inventario;
@@ -114,3 +249,4 @@ void Inventario::Inventario_File_Reader(string filename){
     prueba1 = prueba1 + 'a';
     cout<<prueba1<<" -> Tiene "<<prueba1.length()<<" caracteres"<<endl;  */
 //}
+
