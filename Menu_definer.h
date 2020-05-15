@@ -65,6 +65,9 @@ public:
 private:
     string password;
     Inventario Var_Inventario;
+    map<int , int > Venta;
+    int cant_ventas; //cantidad ventas
+    
     void AddProductos();
     void MakeCombos();
     void GenerarVentas();
@@ -77,6 +80,7 @@ public:
    User(); // Constructor
    ~User(); // Destructor
    void Menu();
+   void Venta_File_Writer(string );
    int verificar_usuario(int CC, string clave);
    void User_File_Reader(string filename);
    void Registrar_Usuario(int Cedula, string password);
@@ -85,5 +89,6 @@ private:
    //string password;
    map<int, string > Usuarios;
 };
+
 
 
