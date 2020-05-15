@@ -12,17 +12,60 @@ void Info_Combo::Set_Combo(string str_producto, int precio){
     valor = precio;
 }
 
-// Constructor: Inicializacion basica
+//Funcion que adiciona un combo nuevo al mapa
+void Inventario::Adicionar_Combo(int ID, Combo var_combo){
+    map<int ,Combo >::iterator iter;
+
+    iter = Combos.find(ID);
+    if(iter == Combos.end()){
+        Combos[ID] = var_combo;
+        Total_Combos++;
+    } else {
+        cout<<"Combo no adicionado, el ID se encuentra asignado"<<endl;
+    }
+}
+
+//Funcion que elimina un combo del mapa
+void Inventario::Eliminar_Combo(int ID){
+    map<int ,Combo >::iterator iter;
+
+    iter = Combos.find(ID);
+    if(iter != Combos.end()){
+        Combos.erase(ID);
+        Total_Combos--;
+    } else {
+        cout<<"Combo no encontrado"<<endl;
+    }
+}
+
+//Lista en pantalla los combos disponibles
+void Inventario::Mostrar_Combos_Disponibles(){
+    map<int ,Combo >::iterator iter;
+    Combo var_combo;
+
+    for(iter=Combos.begin(); iter!=Combos.end(); iter++){
+        var_combo = iter->second;
+        cout<<"Combo"<<iter->first<<" : "<<var_combo.nombre<<" $"<<var_combo.valor<<endl;
+    }
+
+}
+
+// Constructor: Inicialización básica
 Inventario::Inventario(){
     Total_Productos = 0;
+    Total_Combos = 0;
     Productos = {};
+    Combos = {};
 }
 
 // Destructor: Libera memoria
 Inventario::~Inventario(){
    if (Productos.size() != 0) Productos.clear();
+   if (Combos.size() != 0) Combos.clear();
    Total_Productos = 0;
+   Total_Combos = 0;
    Productos = {};
+   Combos = {};
 }
 
 // Definicion del constructor, fuera de la estructura. Inicializacion basica
@@ -217,6 +260,74 @@ void Inventario::Inventario_File_Writer(string filename){
         }
 }
 
+//Funcion que retorna el total de combos en el mapa
+int Inventario::Retorna_Total_Combos(){
+    return Total_Combos;
+}
+
+//Esta funcion escribe en el archivo los combos actuales
+void Inventario::Combo_File_Writer(string filename){
+    ofstream FileOut(filename.c_str(), ios::out);
+    Combo var_combo;
+    map<int , Combo >::iterator iter;
+
+  if ( FileOut.is_open() ){
+    for(iter = Combos.begin(); iter != Combos.end(); iter++){
+       var_combo = iter->second;
+       FileOut<<iter->first<<"  "; //ID del combo
+       FileOut<<var_combo.nombre<<" ; "; //Nombre o descripcion del combo
+       FileOut<<var_combo.valor<<endl;  //Precio
+    }
+    FileOut.close();
+  } else {
+           cout<<"Error de apertura del archivo."<<endl;
+        }
+}
+
+
+/*Esta función lee el archivo de Combo y asigna cada uno de estos al mapa de la clase inventario.
+El formato del archivo es:
+ID Combo ; Valor_Combo
+Para la base de dados del ejemplo de inventario dado el archivo es:
+1 Dos perros y dos gaseosas ; 35000
+2 Dos gaseosas con nachos ; 17900
+3 Hamburguesa mas gaseosa ; 16500
+*/
+void Inventario::Combo_File_Reader(string filename){
+    ifstream FileIn(filename.c_str(), ios::in);
+    string str, str_combo;
+    int i = 0, var, ID_combo, valor;
+    Combo var_combo;
+    map<int , Combo >::iterator iter;
+
+  if ( FileIn.is_open() ){
+    while (!FileIn.eof()){
+       FileIn>>ID_combo;
+       FileIn>>str;
+       str_combo = str;
+       FileIn>>str;
+       while (str != ";"){
+          str_combo = str_combo + " ";
+          str_combo = str_combo + str;
+          FileIn>>str;
+       }
+       FileIn>>valor;
+
+       var_combo.Set_Combo(str_combo,valor);
+
+       iter = Combos.find(ID_combo); //La clave solo se inserta una vez, si se inserto previamente ignora ese combo
+       if ( iter == Combos.end()){
+          Combos[ID_combo] = var_combo; //Inserta el combo en el mapa, usando como clave ID_Combo
+          i++;
+          Total_Combos = i;
+       }
+    }
+    FileIn.close();
+  } else {
+           cout<<"Error de apertura del archivo."<<endl;
+        }
+}
+
 /*int main(){
    Inventario var_inventario;
    string fileInventario;
@@ -249,4 +360,3 @@ void Inventario::Inventario_File_Writer(string filename){
     prueba1 = prueba1 + 'a';
     cout<<prueba1<<" -> Tiene "<<prueba1.length()<<" caracteres"<<endl;  */
 //}
-
