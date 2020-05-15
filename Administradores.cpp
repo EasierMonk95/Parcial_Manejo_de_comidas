@@ -8,15 +8,16 @@ Admin::~Admin(){
 
 }
 
+//Funcion en la cual se muestran las opciones del menu y son los accesos directos a cada funcion de inventario
 void Admin::Menu(){
     string temp_key;
-    bool truth=true, rather=false;
+    bool truth=true;
     int i=0, choice;
+    Var_Inventario.Inventario_File_Reader("Info_Inventario.txt");
     cout<<"Coloque clave de administrador: ";
     cin>>password; //clave: 1000409965
     //cout<<endl<<password<<endl;
     temp_key = metodo2(0,4, "Admin_key.dat");
-    cout<<temp_key<<endl;
     while(temp_key != password && i<3){
         cout<<"Clave incorrecta, pruebe nuevamente "<<i+1<<" de 3 intentos realizados: ";
         cin>>password;
@@ -30,24 +31,20 @@ void Admin::Menu(){
         cout<<"1.Ingresar productos al inventario"<<endl;
         cout<<"2.Armar combos"<<endl;
         cout<<"3.Generar reporte de ventas"<<endl;
-        cout<<"4.Ingresar nuevo usuario"<<endl;
-        cout<<"5.Salir"<<endl;
+        cout<<"4.Salir"<<endl;
         cin>>choice;
         switch(choice){
 
         case 1: AddProductos();
             break;
 
-        case 2: MakeCombos();
+        case 2: //MakeCombos();
             break;
 
-        case 3: GenerarVentas();
+        case 3: //GenerarVentas();
             break;
 
-        case 4: RegistrarUser();
-            break;
-
-        case 5: cout<<"Volviendo al menu inicial"<<endl<<endl;
+        case 4: cout<<"Volviendo al menu inicial"<<endl<<endl;
             truth=false;
             break;
 
@@ -59,11 +56,59 @@ void Admin::Menu(){
     }
 }
 
+//Funcion que permite agregar productos
 void Admin::AddProductos(){
+    string str, str_producto, str_unidad;
+    int  ID_producto, cant_unidad, cant_total, valor, opcion;
+    Producto var_producto;
+    map<int ,Producto >::iterator iter;
 
+    cout<<endl<<"1. Agregar nuevo producto "<<endl;
+    cout<<"2. Agregar mayor cantidad en producto existente "<<endl;
+    cout<<"3. Listar Productos disponibles "<<endl;
+    cout<<"4. Salir "<<endl;
+    cin>>opcion;
+
+    switch(opcion){
+      case 1: cout<<"Ingrese nombre del producto: ";
+       cin>>str_producto;
+       cout<<"Ingrese cantidad por paquete o medida: ";
+       cin>>cant_unidad;
+       cout<<"Ingrese unidad de medida (unds, ml): ";
+       cin>>str_unidad;
+       cout<<"Ingrese la cantidad total comprada del producto: ";
+       cin>>cant_total;
+       cout<<"Ingrese el costo: ";
+       cin>>valor;
+       var_producto.Set_Info_Producto(str_producto,str_unidad,cant_unidad,cant_total,valor);
+       ID_producto = Var_Inventario.Retorna_Total_Productos() + 1;
+       Var_Inventario.Adicionar_Producto(ID_producto, var_producto);
+       Var_Inventario.Inventario_File_Writer("Info_Inventario.txt");
+       break;
+
+       case 2:
+           cout<<"Ingrese el ID del producto a ingresar: ";
+           cin>>ID_producto;
+           cout<<"Ingrese la cantidad a adicionar del producto: ";
+           cin>>cant_total;
+           Var_Inventario.Agregar_Cantidad_Producto(ID_producto, cant_total);
+           Var_Inventario.Inventario_File_Writer("Info_Inventario.txt");
+       break;
+
+       case 3:            
+            Var_Inventario.Mostrar_Productos_Disponibles();
+
+       break;
+
+       case 4:
+
+       break;
+
+       default:
+        cout<<"Opcion invalida, prueba nuevamente. "<<endl;
+       break;
+
+    }
 }
 
-void Admin :: MakeCombos(){}
-void Admin :: GenerarVentas(){}
-void Admin :: RegistrarUser(){}
 
