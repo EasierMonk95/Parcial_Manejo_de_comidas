@@ -38,10 +38,19 @@ public:
    void Agregar_Cantidad_Producto(int , int ); //Aumentar cantidad de un producto
    int Disminuir_Cantidad_Producto(int , int ); //Disminuir cantidad de un producto
    void Inventario_File_Writer(string filename); //Esta funcion escribe en el archivo el inventario actual
-//private:
-    map<int , Producto > Productos; //Clave Id del producto y Producto como la estructura
-    int Total_Productos;
-};
+   void Adicionar_Combo(int ,Combo ); //Clave Id del combo y Combo para adicionar
+   void Eliminar_Combo(int ); //Clave Id del combo a eliminar
+   void Mostrar_Combos_Disponibles();
+   void Combo_File_Writer(string );
+   void Combo_File_Reader(string ); //Función para leer la base de datos de combos de un archivo.
+   int Retorna_Total_Combos(); //Total de combos
+  //int Disminuir_Cantidad_combo(int , int ); //Disminuir cantidad de un producto por venta de combo
+private:
+   map<int , Producto > Productos; //Clave Id del producto y Producto como la estructura
+   map<int , Combo > Combos; //Clave Id del Combo y combo como la estructura creada
+   int Total_Productos;
+   int Total_Combos;
+   };
 
 
 class Admin{
@@ -72,3 +81,6 @@ private:
    //string password;
    map<int, string > Usuarios;
 };
+
+
+
