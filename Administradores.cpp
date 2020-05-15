@@ -14,6 +14,7 @@ void Admin::Menu(){
     bool truth=true;
     int i=0, choice;
     Var_Inventario.Inventario_File_Reader("Info_Inventario.txt");
+    Var_Inventario.Combo_File_Reader("Info_Combo.txt");
     cout<<"Coloque clave de administrador: ";
     cin>>password; //clave: 1000409965
     //cout<<endl<<password<<endl;
@@ -38,7 +39,7 @@ void Admin::Menu(){
         case 1: AddProductos();
             break;
 
-        case 2: //MakeCombos();
+        case 2: MakeCombos();
             break;
 
         case 3: //GenerarVentas();
@@ -71,7 +72,8 @@ void Admin::AddProductos(){
 
     switch(opcion){
       case 1: cout<<"Ingrese nombre del producto: ";
-       cin>>str_producto;
+       cin.ignore();
+       getline(cin,str_producto);
        cout<<"Ingrese cantidad por paquete o medida: ";
        cin>>cant_unidad;
        cout<<"Ingrese unidad de medida (unds, ml): ";
@@ -111,4 +113,66 @@ void Admin::AddProductos(){
     }
 }
 
+void Admin::MakeCombos(){
+    string str, str_combo;
+    int  ID_combo, cant_unidad, valor, opcion, n_ing, i, cont = 0;
+    Combo var_combo;
+    map<int ,Combo >::iterator iter;
+    int *ID, *IDC;
+
+    cout<<endl<<"1. Agregar nuevo combo "<<endl;
+    cout<<"2. Eliminar un combo existente "<<endl;
+    cout<<"3. Listar combos disponibles "<<endl;
+    cout<<"4. Salir "<<endl;
+    cin>>opcion;
+
+    switch(opcion){
+      case 1: cout<<"Ingrese el nombre del combolos productos y cantidades del combo: ";
+       cin>>str_combo;
+       cout<<"Ingrese el costo del combo: ";
+       cin>>valor;
+       cout<<"Ingrese la cantidad total de ingredientes del combo del combo: ";
+       cin>>n_ing;
+       ID = new int [n_ing];
+       IDC = new int [n_ing];
+
+       i = 0;
+       cont = 0;
+       while(cont<n_ing){
+          cout<<"Ingrese el ID del ingrediente o producto "<<i+1<<": ";
+          cin>>ID[i];
+          cout<<"Ingrese la cantidad necesaria de ese ingrediente: ";
+          cin>>IDC[i];
+          cont = cont + IDC[i];
+          i++;
+       }
+       var_combo.Set_Combo(str_combo,valor,n_ing,ID,IDC);
+       ID_combo = Var_Inventario.Retorna_Total_Combos() + 1;
+       Var_Inventario.Adicionar_Combo(ID_combo, var_combo);
+
+//       Var_Inventario.Combo_File_Writer("Info_Combo.txt");
+       break;
+
+       case 2:
+           cout<<"Ingrese el ID del combo a eliminar: ";
+           cin>>ID_combo;
+           Var_Inventario.Eliminar_Combo(ID_combo);
+//           Var_Inventario.Combo_File_Writer("Info_Combo.txt");
+       break;
+
+       case 3:
+            Var_Inventario.Mostrar_Combos_Disponibles();
+
+       break;
+
+       case 4:
+
+       break;
+
+       default:
+        cout<<"Opcion invalida, prueba nuevamente. "<<endl;
+       break;
+
+    }
+}
 
