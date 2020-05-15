@@ -18,9 +18,13 @@ typedef struct Info_Producto Producto;
 struct Info_Combo
 {   string nombre;  //nombre del producto
     int valor; //Precio Total
+    int cantidad_total_ingredientes; //cantidad total de  ingredientes en el combo.
+    map<int , int > cantidad_producto; //cantidad total de por cada producto.
+                                      //La clave del mapa es el ID en inventario de cada producto
+
 
     Info_Combo( ); //Constructor
-    void Set_Combo(string , int ); //función para asignar valores
+    void Set_Combo(string , int, int, int *, int * ); //función para asignar valores
 };
 typedef struct Info_Combo Combo;
 
@@ -81,6 +85,5 @@ private:
    //string password;
    map<int, string > Usuarios;
 };
-
 
 
