@@ -13,7 +13,7 @@ void User::Menu(){
     int resultado, carnet,recibe,eleccion;
     string password, pregunta;
     Inventario var_inventario;
-     var_inventario.Combo_File_Reader("Info_Combo.txt");
+    var_inventario.Combo_File_Reader("Info_Combo.txt");
     cout<<endl<<"1.Registrarse como usuario"<<endl<<"2.Entrar como usuario ya registrado"<<endl;
     cin>>recibe;
     switch (recibe) {
@@ -58,7 +58,7 @@ void User::Menu(){
              var_inventario.Mostrar_Combos_Disponibles();
             cout<<endl<<"Escoge el combo que mas se adapte a ti: ";
             cin>>eleccion;
-            
+
             cout<<endl<<"Dinos la sala en la que veras tu pelicula: ";
             cin>>pregunta;
             cout<<endl<<"En que silla estaras sentado para recibir tu combo: ";
