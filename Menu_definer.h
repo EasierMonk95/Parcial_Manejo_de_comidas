@@ -13,19 +13,36 @@ struct Info_Producto
     Info_Producto( ); //Constructor
     void Set_Info_Producto(string ,string , int , int , int ); //funcion para asignar valores
 };
-
 typedef struct Info_Producto Producto;
+
+struct Info_Combo
+{   string nombre;  //nombre del producto
+    int valor; //Precio Total
+
+    Info_Combo( ); //Constructor
+    void Set_Combo(string , int ); //función para asignar valores
+};
+typedef struct Info_Combo Combo;
+
 
 class Inventario{
 public:
    Inventario(); // Constructor
    ~Inventario(); // Destructor
-   void Inventario_File_Reader(string ); //Funci�n para leer la base de datos de inventario de un archivo.
-   void Adicionar_Producto( );
-private:
+   void Inventario_File_Reader(string ); //Funcion para leer la base de datos de inventario de un archivo.
+   void Adicionar_Producto(int, Producto);//Clave Id del producto y Producto para adicionar
+   void Eliminar_Producto(int);
+   Producto Retornar_Producto(int ); //Clave Id del producto a retornar
+   int Retorna_Total_Productos(); //Total de productos
+   void Mostrar_Productos_Disponibles(); //Productos disponibles
+   void Agregar_Cantidad_Producto(int , int ); //Aumentar cantidad de un producto
+   int Disminuir_Cantidad_Producto(int , int ); //Disminuir cantidad de un producto
+   void Inventario_File_Writer(string filename); //Esta funcion escribe en el archivo el inventario actual
+//private:
     map<int , Producto > Productos; //Clave Id del producto y Producto como la estructura
     int Total_Productos;
 };
+
 
 class Admin{
 public:
@@ -34,7 +51,7 @@ public:
    void Menu();
 private:
     string password;
-    Inventario Var_Productos;
+    Inventario Var_Inventario;
     void AddProductos();
     void MakeCombos();
     void GenerarVentas();
@@ -47,8 +64,11 @@ public:
    User(); // Constructor
    ~User(); // Destructor
    void Menu();
-private:
-   string password;
-
- map<int, string > Usuarios;
+   int verificar_usuario(int CC, string clave);
+   void User_File_Reader(string filename);
+   void Registrar_Usuario(int Cedula, string password);
+   void User_File_writer(string filename);
+private:  
+   //string password;
+   map<int, string > Usuarios;
 };
