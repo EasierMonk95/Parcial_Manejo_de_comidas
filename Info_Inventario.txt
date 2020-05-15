@@ -1,0 +1,5 @@
+1 Vasos ; 9 Unds 7 84000
+2 Paquete de Pan Perro ; 6 Unds 7 18550
+3 Salchicha para Perro ; 20 Unds 3 37500
+4 Paquete de Carne para Hamburguesa ; 4 Unds 4 46200
+5 Bolsa de Salsa Roja ; 150 ml 3 21600
