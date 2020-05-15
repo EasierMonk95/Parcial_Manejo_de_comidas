@@ -7,9 +7,16 @@ Info_Combo::Info_Combo( ){
 }
 
 // Definición de función para asignar producto y precio con la estructura combo
-void Info_Combo::Set_Combo(string str_producto, int precio){
+void Info_Combo::Set_Combo(string str_producto, int precio, int n_ing, int *ID, int *IDC){
+    int i=0, cont = 0;
     nombre = str_producto;
     valor = precio;
+    cantidad_total_ingredientes = n_ing;
+    while (cont<n_ing){
+       cantidad_producto[ID[i]] = IDC[i];
+       cont = cont + IDC[i];
+       i++;
+    }
 }
 
 //Funcion que adiciona un combo nuevo al mapa
@@ -268,15 +275,25 @@ int Inventario::Retorna_Total_Combos(){
 //Esta funcion escribe en el archivo los combos actuales
 void Inventario::Combo_File_Writer(string filename){
     ofstream FileOut(filename.c_str(), ios::out);
+    int i=0, cont=0;
     Combo var_combo;
     map<int , Combo >::iterator iter;
+    map<int , int > mapa_CP; //mapa cantidad de productos
+    map<int , int >::iterator iter_CP;
 
   if ( FileOut.is_open() ){
     for(iter = Combos.begin(); iter != Combos.end(); iter++){
        var_combo = iter->second;
        FileOut<<iter->first<<"  "; //ID del combo
        FileOut<<var_combo.nombre<<" ; "; //Nombre o descripcion del combo
-       FileOut<<var_combo.valor<<endl;  //Precio
+       FileOut<<var_combo.valor<<" ";  //Precio
+       FileOut<<var_combo.cantidad_total_ingredientes<<" "; //numero total de ingredientes
+       cont = var_combo.cantidad_producto.size();
+       mapa_CP = var_combo.cantidad_producto;
+       for (iter_CP = mapa_CP.begin(); iter_CP != mapa_CP.end(); iter_CP++){
+          FileOut<<iter_CP->first<<" "<<iter_CP->second;
+       }
+       FileOut<<endl;
     }
     FileOut.close();
   } else {
@@ -287,7 +304,7 @@ void Inventario::Combo_File_Writer(string filename){
 
 /*Esta función lee el archivo de Combo y asigna cada uno de estos al mapa de la clase inventario.
 El formato del archivo es:
-ID Combo ; Valor_Combo
+ID Combo ; Valor_Combo cantidad_total_ingredientes ID_producto1 cantidad_producto1 ID_producto2 cantidad_producto2 ... ID_productok cantidad_productok
 Para la base de dados del ejemplo de inventario dado el archivo es:
 1 Dos perros y dos gaseosas ; 35000
 2 Dos gaseosas con nachos ; 17900
@@ -296,9 +313,10 @@ Para la base de dados del ejemplo de inventario dado el archivo es:
 void Inventario::Combo_File_Reader(string filename){
     ifstream FileIn(filename.c_str(), ios::in);
     string str, str_combo;
-    int i = 0, var, ID_combo, valor;
+    int i = 0, var, ID_combo, valor, n_ing, cont = 0;
     Combo var_combo;
     map<int , Combo >::iterator iter;
+    int *ID, *IDC;
 
   if ( FileIn.is_open() ){
     while (!FileIn.eof()){
@@ -312,8 +330,18 @@ void Inventario::Combo_File_Reader(string filename){
           FileIn>>str;
        }
        FileIn>>valor;
-
-       var_combo.Set_Combo(str_combo,valor);
+       FileIn>>n_ing;
+       ID = new int [n_ing];
+       IDC = new int [n_ing];
+       i = 0;
+       cont=0;
+       while(cont<n_ing){
+          FileIn>>ID[i];
+          FileIn>>IDC[i];
+          cont = cont + IDC[i];
+          i++;
+       }
+       var_combo.Set_Combo(str_combo,valor,n_ing,ID,IDC);
 
        iter = Combos.find(ID_combo); //La clave solo se inserta una vez, si se inserto previamente ignora ese combo
        if ( iter == Combos.end()){
