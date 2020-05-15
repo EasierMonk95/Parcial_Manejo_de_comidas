@@ -7,9 +7,10 @@ int main(){
     Admin Var_Admin;
     User Var_User;
     int a;
+
     while(!fake){
       cout<<"Bienvenido al cinema Simon's"<<endl;
-      cout<<"1. Ingresar como administrador"<<endl<<"2. Ingresar como usuario"<<endl<<"3. Salir"<<endl;
+      cout<<"1. Ingresar como administrador"<<endl<<"2. Opciones para usuarios"<<endl<<"3. Salir"<<endl;
       cin>>a;
       switch(a){
 
@@ -24,6 +25,7 @@ int main(){
           break;
 
       default: cout<<"Opcion invalida, prueba nuevamente. "<<endl;
+          break;
       }
     }
     return 1;
