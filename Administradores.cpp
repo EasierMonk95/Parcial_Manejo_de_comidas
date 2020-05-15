@@ -1,11 +1,11 @@
 #include "Menu_definer.h"
 
 Admin::Admin(){
-
+   cant_ventas = 0;
 }
 
 Admin::~Admin(){
-
+   cant_ventas = 0;
 }
 
 //Funcion en la cual se muestran las opciones del menu y son los accesos directos a cada funcion de inventario
